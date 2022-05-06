@@ -113,7 +113,7 @@ class UniCoreImpl : UniCore {
             }
         }
 
-        hudRegistry.registerElement(TestHudElement)
+        //hudRegistry.registerElement(TestHudElement)
     }
 
     override fun withInstance(instance: UniCore) {
