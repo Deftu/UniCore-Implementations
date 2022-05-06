@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "xyz.unifycraft.unicore.mixins",
+  "compatibilityLevel": "${javaversion}",
+  "verbose": true,
+  "target": "@env(CLIENT)",
+  "refmap": "mixins.unicore.refmap.json",
+  "plugin": "xyz.unifycraft.unicore.mixins.MixinPlugin"
+}

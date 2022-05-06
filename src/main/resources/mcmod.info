@@ -1,0 +1,18 @@
+[
+    {
+        "modid": "${id}",
+        "name": "${name}",
+        "description": "Core library and Minecraft experience.",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "url": "",
+        "updateUrl": "",
+        "authorList": [
+            "UnifyCraft Team"
+        ],
+        "credits": "",
+        "logoFile": "",
+        "screenshots": [],
+        "dependencies": []
+    }
+]

@@ -1,0 +1,15 @@
+{
+    "schemaVersion": 1,
+    "id": "${id}",
+    "version": "${version}",
+    "name": "${name}",
+    "description": "Core library and Minecraft experience.",
+    "authors": [
+        "UnifyCraft Team"
+    ],
+    "contact": {
+        "sources": "https://github.com/UnifyCraft/UniCore"
+    },
+    "license": "LGPL-3.0",
+    "environment": "client"
+}
