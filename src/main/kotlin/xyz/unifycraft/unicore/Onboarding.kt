@@ -27,22 +27,22 @@ object Onboarding {
         }
     }
 
+    fun isOnboardingSeen() = data.seenOnboarding
+    fun setOnboardingSeen(seen: Boolean) {
+        data.seenOnboarding = seen
+        save()
+    }
+
     fun isToS() = data.tos
     fun setToS(tos: Boolean) = apply {
         data.tos = tos
         save()
     }
-
-    fun isCrashReporting() = data.crashReporting
-    fun setCrashReporting(crashReporting: Boolean) = apply {
-        data.crashReporting = crashReporting
-        save()
-    }
 }
 
-class OnboardingData {
+data class OnboardingData(
+    @SerializedName("seen_onboarding")
+    var seenOnboarding: Boolean = false,
     @SerializedName("tos")
-    var tos = false
-    @SerializedName("crash_tracking")
-    var crashReporting = false
-}
+    var tos: Boolean = false
+)

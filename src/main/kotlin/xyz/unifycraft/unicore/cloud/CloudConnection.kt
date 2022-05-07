@@ -40,10 +40,7 @@ class CloudConnection(
             if (!connectLock.tryLock()) return
             if (!Onboarding.isToS()) return
             if (isOpen) return
-            if (!AccountValidator.validate(
-                    UMinecraft.getMinecraft().session.token,
-                    UMinecraft.getMinecraft().session.profile.id.toString().replace("-", "")
-                )) return
+            addHeader("minecraft_token", UMinecraft.getMinecraft().session.token)
             if (!previouslyConnected) {
                 if (uri.scheme == "wss")
                     setSocketFactory(HttpRequesterImpl.sslSocketFactory)

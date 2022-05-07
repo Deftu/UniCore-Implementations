@@ -30,8 +30,8 @@ abstract class FullscreenScreen(
         height = 100.percent()
     } childOf window
     val logo = UIImage.ofResourceCached("/assets/unicore/logo.png", UniCore.getElementaResourceCache()).constrain {
-        x = 25.pixels()
-        y = 25.pixels()
+        x = 10.pixels()
+        y = 10.pixels()
         width = 50.pixels()
         height = 50.pixels()
     } childOf window

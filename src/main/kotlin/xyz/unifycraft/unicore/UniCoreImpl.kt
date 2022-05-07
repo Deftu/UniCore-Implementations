@@ -87,6 +87,7 @@ class UniCoreImpl : UniCore {
         config = UniCoreConfig().also { it.initialize() }
         jsonHelper = JsonHelper()
         guiHelper = GuiHelper()
+        elementaResourceCache = ResourceCache()
         elementaHud = ElementaHud().also { it.initialize() }
         notifications = Notifications()
         commandRegistry = CommandRegistryImpl().also { it.registerCommand(UniCoreCommand()) }

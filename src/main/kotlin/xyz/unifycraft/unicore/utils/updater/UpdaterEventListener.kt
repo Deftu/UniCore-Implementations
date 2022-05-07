@@ -7,6 +7,7 @@ import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.utils.updater.ModUpdateCheckConfirmation
+import xyz.unifycraft.unicore.gui.updater.UpdaterScreen
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.abs
 
@@ -30,7 +31,7 @@ class UpdaterEventListener {
         if (event.gui !is GuiOptions) return
         if (id == 0) return
         if (event.button.id != id) return
-        UniCore.getGuiHelper().showScreen(ModUpdateCheckConfirmation())
+        UniCore.getGuiHelper().showScreen(UpdaterScreen())
     }
 
     private fun createSecureId(
