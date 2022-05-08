@@ -41,7 +41,7 @@ class ModLoaderHelperImpl : ModLoaderHelper {
         //#if MC<=11202
         val value = Launch.blackboard["fml.deobfuscatedEnvironment"] ?: return false
         return value as Boolean
-        //#elseif MC>=11404
+        //#elseif MC>=11404 && FORGE==1
         //$$ FMLEnvironment.production
         //#elseif FABRIC==1
         //$$ return FabricLoader.getInstance().isDevelopmentEnvironment()

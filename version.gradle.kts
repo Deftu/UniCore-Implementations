@@ -46,6 +46,7 @@ dependencies {
 
 tasks {
     named<Jar>("jar") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val projectName: String by project
         archiveBaseName.set("$projectName-${mcData.versionStr}-${mcData.loader.name}".toLowerCase())
     }
