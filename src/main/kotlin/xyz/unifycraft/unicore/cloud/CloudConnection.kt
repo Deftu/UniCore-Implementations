@@ -8,10 +8,9 @@ import org.java_websocket.handshake.ServerHandshake
 import xyz.deftu.quicksocket.client.QuickSocketClient
 import xyz.deftu.quicksocket.common.CloseCode
 import xyz.deftu.quicksocket.common.packets.PacketBase
-import xyz.unifycraft.unicore.Onboarding
+import xyz.unifycraft.unicore.onboarding.Onboarding
 import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.UniCoreEnvironment
-import xyz.unifycraft.unicore.api.utils.http.SSLBuilder
 import xyz.unifycraft.unicore.cloud.packets.PacketKeepAlive
 import xyz.unifycraft.unicore.cloud.packets.PacketNewRelease
 import xyz.unifycraft.unicore.utils.http.HttpRequesterImpl

@@ -28,12 +28,20 @@ loom.disableRunConfigs(GameSide.SERVER)
 if (mcData.loader == ModLoader.forge)
     loom.useForgeMixin(projectId)
 
+val dummy by sourceSets.creating
+
 blossom {
     replaceToken("__VERSION__", project.version)
 }
 
 dependencies {
-    unishade("xyz.unifycraft.unicore:unicore-${mcData.versionStr}-${mcData.loader.name}:${project.version}")
+    // Implement API
+    val unicoreApi = "xyz.unifycraft.unicore:unicore-${mcData.versionStr}-${mcData.loader.name}:${project.version}"
+    unishade(unicoreApi)
+    "dummyCompileOnly"(unicoreApi)
+
+    // Ducks
+    implementation(dummy.output)
 }
 
 tasks {

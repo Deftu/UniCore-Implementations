@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import xyz.unifycraft.unicore.api.UniCore
-import xyz.unifycraft.unicore.api.utils.updater.ModUpdateCheckConfirmation
 import xyz.unifycraft.unicore.gui.updater.UpdaterScreen
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.abs

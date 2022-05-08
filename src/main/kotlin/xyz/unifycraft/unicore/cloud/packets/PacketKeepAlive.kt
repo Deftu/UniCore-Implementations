@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 
 class PacketKeepAlive : PacketBase("KEEP_ALIVE") {
     override fun onPacketReceived(data: JsonObject?) {
-        data?.let {
-            Multithreading.schedule({
-                UniCoreImpl.instance.cloudConnection().sendPacket(PacketKeepAlive())
-            }, data["interval"].asJsonPrimitive.asLong / 2, TimeUnit.MILLISECONDS)
-        }
+        if (data == null) return
+        Multithreading.schedule({
+            println("Sending keep alive packet...")
+            UniCoreImpl.instance.cloudConnection().sendPacket(PacketKeepAlive())
+        }, data["interval"].asJsonPrimitive.asLong, TimeUnit.MILLISECONDS)
     }
 
     override fun onPacketSent(data: JsonObject) {

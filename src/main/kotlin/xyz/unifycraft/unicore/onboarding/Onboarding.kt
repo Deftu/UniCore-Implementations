@@ -1,9 +1,10 @@
-package xyz.unifycraft.unicore
+package xyz.unifycraft.unicore.onboarding
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import xyz.deftu.quicksocket.common.utils.QuickSocketJsonHandler
 import xyz.unifycraft.unicore.api.UniCore
+import xyz.unifycraft.unicore.gui.onboarding.OnboardingScreen
 import java.io.File
 
 object Onboarding {
@@ -25,6 +26,10 @@ object Onboarding {
         if (this::data.isInitialized) {
             file.writeText(UniCore.getGson().toJson(data))
         }
+    }
+
+    fun openScreen() {
+        UniCore.getGuiHelper().showScreen(OnboardingScreen())
     }
 
     fun isOnboardingSeen() = data.seenOnboarding

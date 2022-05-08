@@ -7,11 +7,13 @@ import net.minecraft.client.gui.GuiChat
 import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.commands.BaseCommand
 import xyz.unifycraft.unicore.api.commands.CommandRegistry
+import xyz.unifycraft.unicore.api.commands.annotations.Command
 import xyz.unifycraft.unicore.api.commands.arguments.*
 import xyz.unifycraft.unicore.api.events.ChatSendEvent
+import xyz.unifycraft.unicore.commands.arguments.ArgumentSerializer
 
 class CommandRegistryImpl : CommandRegistry {
-    override val argumentSerializers = mutableMapOf<Class<*>, ArgumentSerializer<*>>()
+    val argumentSerializers = mutableMapOf<Class<*>, ArgumentSerializer<*>>()
     override val commands = mutableMapOf<String, BaseCommand>()
     private var autoCompletion: Array<String>? = null
 
@@ -30,9 +32,8 @@ class CommandRegistryImpl : CommandRegistry {
         command.aliases.forEach { commands[it] = command }
     }
 
-    override fun <T> registerArgumentParser(type: Class<T>, parser: ArgumentSerializer<T>) {
-        argumentSerializers[type] = parser
-    }
+    override fun registerCommand(command: Any) = registerCommand(AnnotationCommand(argumentSerializers, command::class.java.getAnnotation(
+        Command::class.java), command::class.java, command) as BaseCommand)
 
     override fun processAutoComplete(input: String) {
         autoCompletion = null

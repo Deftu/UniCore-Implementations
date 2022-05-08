@@ -23,7 +23,6 @@ import xyz.unifycraft.unicore.cloud.CloudJsonParser
 import xyz.unifycraft.unicore.commands.CommandRegistryImpl
 import xyz.unifycraft.unicore.commands.UniCoreCommand
 import xyz.unifycraft.unicore.keybinds.KeyBindRegistryImpl
-import xyz.unifycraft.unicore.utils.FileHelperImpl
 import xyz.unifycraft.unicore.utils.http.HttpRequesterImpl
 import xyz.unifycraft.unicore.utils.hypixel.HypixelHelperImpl
 import xyz.unifycraft.unicore.utils.updater.UpdaterEventListener
@@ -33,8 +32,14 @@ import java.util.*
 import net.minecraftforge.common.MinecraftForge
 import xyz.unifycraft.unicore.api.gui.hud.HudRegistry
 import xyz.unifycraft.unicore.api.utils.deleter.Deleter
+import xyz.unifycraft.unicore.features.ModWarning
+import xyz.unifycraft.unicore.gui.ElementaHudImpl
 import xyz.unifycraft.unicore.gui.hud.HudRegistryImpl
 import xyz.unifycraft.unicore.gui.hud.TestHudElement
+import xyz.unifycraft.unicore.gui.notifications.NotificationsImpl
+import xyz.unifycraft.unicore.onboarding.Onboarding
+import xyz.unifycraft.unicore.onboarding.OnboardingEventListener
+import xyz.unifycraft.unicore.utils.*
 import xyz.unifycraft.unicore.utils.deleter.DeleterImpl
 import xyz.unifycraft.unicore.utils.updater.UpdaterImpl
 import net.minecraftforge.fml.common.Mod as ForgeMod
@@ -57,6 +62,7 @@ class UniCoreImpl : UniCore {
     private lateinit var config: UniCoreConfig
     private lateinit var jsonHelper: JsonHelper
     private lateinit var guiHelper: GuiHelper
+    private lateinit var modLoaderHelper: ModLoaderHelper
     private lateinit var elementaResourceCache: ResourceCache
     private lateinit var elementaHud: ElementaHud
     private lateinit var notifications: Notifications
@@ -75,8 +81,7 @@ class UniCoreImpl : UniCore {
     private lateinit var cloudConnection: CloudConnection
 
     override fun initialize(event: InitializationEvent) {
-        QuickSocketJsonHandler.applyJsonParser(CloudJsonParser())
-
+        // APIs
         //#if MC<=11202
         listOf(
             UpdaterEventListener()
@@ -85,23 +90,28 @@ class UniCoreImpl : UniCore {
 
         fileHelper = FileHelperImpl(event.gameDir)
         config = UniCoreConfig().also { it.initialize() }
-        jsonHelper = JsonHelper()
-        guiHelper = GuiHelper()
+        jsonHelper = JsonHelperImpl()
+        guiHelper = GuiHelperImpl()
+        modLoaderHelper = ModLoaderHelperImpl()
         elementaResourceCache = ResourceCache()
-        elementaHud = ElementaHud().also { it.initialize() }
-        notifications = Notifications()
+        elementaHud = ElementaHudImpl()
+        notifications = NotificationsImpl()
         commandRegistry = CommandRegistryImpl().also { it.registerCommand(UniCoreCommand()) }
         keyBindRegistry = KeyBindRegistryImpl(fileHelper.dataDir)
         httpRequester = HttpRequesterImpl().also {  it.initialize() }
         hudRegistry = HudRegistryImpl()
         deleter = DeleterImpl().also { it.initialize() }
         updater = UpdaterImpl()
-        mojangHelper = MojangHelper()
+        mojangHelper = MojangHelperImpl()
         hypixelHelper = HypixelHelperImpl()
-        internetHelper = InternetHelper()
-        colorHelper = ColorHelper()
+        internetHelper = InternetHelperImpl()
+        colorHelper = ColorHelperImpl()
 
+        // Features
+        //ModWarning.initialize()
         Onboarding.initialize()
+        eventBus.register(OnboardingEventListener())
+        QuickSocketJsonHandler.applyJsonParser(CloudJsonParser())
         cloudConnection = CloudConnection(
             sessionId = UUID.randomUUID(),
             headers = arrayOf(
@@ -113,8 +123,6 @@ class UniCoreImpl : UniCore {
                 tryConnect()
             }
         }
-
-        //hudRegistry.registerElement(TestHudElement)
     }
 
     override fun withInstance(instance: UniCore) {
@@ -128,6 +136,7 @@ class UniCoreImpl : UniCore {
     override fun config() = config
     override fun jsonHelper() = jsonHelper
     override fun guiHelper() = guiHelper
+    override fun modLoaderHelper() = modLoaderHelper
     override fun elementaResourceCache() = elementaResourceCache
     override fun elementaHud() = elementaHud
     override fun notifications() = notifications
