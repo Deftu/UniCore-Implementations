@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
-    "id": "${id}",
-    "version": "${version}",
-    "name": "${name}",
+    "id": "${mod_id}",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
     "description": "Core library and Minecraft experience.",
     "authors": [
         "UnifyCraft Team"

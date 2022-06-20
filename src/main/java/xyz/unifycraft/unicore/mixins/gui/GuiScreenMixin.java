@@ -1,7 +1,6 @@
 package xyz.unifycraft.unicore.mixins.gui;
 
 import xyz.unifycraft.unicore.api.UniCore;
-import xyz.unifycraft.unicore.api.events.ChatSendEvent;
 import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -9,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xyz.unifycraft.unicore.api.events.chat.ChatSendEvent;
 
 //#if MC<=11202
 @Mixin({GuiScreen.class})
@@ -19,7 +19,8 @@ public class GuiScreenMixin {
     private void onChatMessageSent(String message, boolean addToChat, CallbackInfo ci) {
         ChatSendEvent event = new ChatSendEvent(message);
         UniCore.getEventBus().post(event);
-        if (event.getCancelled()) ci.cancel();
+        if (event.getCancelled())
+            ci.cancel();
         modifiedSentMessage = event.getMessage();
     }
 

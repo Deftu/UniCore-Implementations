@@ -4,11 +4,12 @@ import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import me.kbrewster.eventbus.Subscribe
 import xyz.unifycraft.unicore.api.UniCore
-import xyz.unifycraft.unicore.api.events.KeyboardInputEvent
-import xyz.unifycraft.unicore.api.events.MouseButtonEvent
+import xyz.unifycraft.unicore.api.events.input.KeyboardInputEvent
+import xyz.unifycraft.unicore.api.events.input.MouseButtonEvent
 import xyz.unifycraft.unicore.api.keybinds.BaseKeyBind
 import xyz.unifycraft.unicore.api.keybinds.KeyBindRegistry
 import xyz.unifycraft.unicore.api.keybinds.KeyBindState
+import xyz.unifycraft.unicore.api.keybinds.annotations.KeyBind
 import java.io.File
 
 class KeyBindRegistryImpl(
@@ -27,6 +28,13 @@ class KeyBindRegistryImpl(
         serializer.initialize(keyBind)
         return keyBinds.put(keyBind.keyCode, keyBind)
     }
+    override fun registerKeyBind(command: Any) = registerKeyBind(
+        AnnotationKeyBind(
+            command::class.java.getAnnotation(KeyBind::class.java),
+            command::class.java,
+            command
+        )
+    )
 
     @Subscribe private
     fun onKeyboardInput(event: KeyboardInputEvent) {

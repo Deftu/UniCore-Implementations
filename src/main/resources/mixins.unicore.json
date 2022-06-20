@@ -1,10 +1,24 @@
 {
-  "required": true,
-  "minVersion": "0.7",
-  "package": "xyz.unifycraft.unicore.mixins",
-  "compatibilityLevel": "${javaversion}",
-  "verbose": true,
-  "target": "@env(CLIENT)",
-  "refmap": "mixins.unicore.refmap.json",
-  "plugin": "xyz.unifycraft.unicore.mixins.MixinPlugin"
+    "required": true,
+    "minVersion": "0.7",
+    "package": "xyz.unifycraft.unicore.mixins",
+    "compatibilityLevel": "${java_version}",
+    "verbose": true,
+    "target": "@env(CLIENT)",
+    "refmap": "mixins.unicore.refmap.json",
+    "mixins": [
+        //#if MC<=11202
+        "client.MinecraftMixin",
+        //#if MC<=10809
+        "client.GameSettingsMixin",
+        "forge.ForgeVersionMixin",
+        "gui.GuiStreamIndicatorMixin",
+        //#endif
+        "forge.JarDiscovererMixin",
+        "gui.GuiChatMixin",
+        "gui.GuiScreenMixin",
+        "network.NetHandlerPlayClientMixin"
+        //#elseif MC<=11701
+        //#endif
+    ]
 }

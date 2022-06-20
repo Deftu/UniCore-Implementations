@@ -7,21 +7,20 @@ import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import xyz.unifycraft.unicore.api.UniCorePalette
-import xyz.unifycraft.unicore.api.gui.components.UIHoverBlock
-import java.util.function.Consumer
+import xyz.unifycraft.unicore.gui.components.UIHoverBlock
 
 class Notification(
-    val title: String,
-    val description: String,
+    title: String,
+    description: String,
     val duration: Float,
     val click: Runnable
 ) : UIHoverBlock(
-    color = UniCorePalette.mediumGray.toConstraint(),
-    hoverColor = UniCorePalette.mediumBlue.brighter(),
-    originalColor = UniCorePalette.mediumBlue,
+    color = UniCorePalette.BACKGROUND.toConstraint(),
+    hoverColor = UniCorePalette.PRIMARY_VARIANT,
+    originalColor = UniCorePalette.PRIMARY,
     outlineWidth = 1f
 ) {
-    private val progressBar = UIBlock(UniCorePalette.mediumBlue).constrain {
+    private val progressBar = UIBlock(UniCorePalette.PRIMARY).constrain {
         x = 0.pixels()
         y = 0.pixels(true)
         width = 0.pixels()
@@ -54,6 +53,10 @@ class Notification(
             y = SiblingConstraint(2f)
             width = FillConstraint(false) - 8.pixels()
         } childOf this
+
+        constrain {
+            height = (90.percent() boundTo descriptionText) + constraints.height
+        }
     }
 
     override fun afterInitialization() {

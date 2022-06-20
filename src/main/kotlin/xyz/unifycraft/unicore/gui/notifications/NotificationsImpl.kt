@@ -5,6 +5,7 @@ import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.gui.notifications.Notifications
 import xyz.unifycraft.unicore.api.gui.ofHud
 import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.TimeUnit
 
 class NotificationsImpl : Notifications {
     private val namespace = "${UniCore.getName()} Notifications"
@@ -24,11 +25,15 @@ class NotificationsImpl : Notifications {
 
     fun post(notification: Notification) {
         if (UniCore.getElementaHud().namespace(namespace).childrenOfType(Notification::class.java).isEmpty()) {
+            println("Posting notification")
             notification ofHud namespace
         } else queue.add(notification)
     }
     override fun post(title: String, description: String) =
         post(Notification(title, description, Notifications.DEFAULT_DURATION) { })
+    override fun post(title: String, description: String, click: Runnable) =
+        post(Notification(title, description, Notifications.DEFAULT_DURATION, click))
+
     override fun post(title: String, description: String, duration: Float) =
         post(Notification(title, description, duration) { })
     override fun post(title: String, description: String, duration: Float, click: Runnable) =

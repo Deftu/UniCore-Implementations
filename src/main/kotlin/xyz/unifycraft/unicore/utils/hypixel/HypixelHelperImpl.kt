@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import okhttp3.Request
 import net.hypixel.api.HypixelAPI
 import net.hypixel.api.reactor.ReactorHttpClient
-import xyz.deftu.deftils.Multithreading
 import xyz.deftu.quicksocket.common.utils.QuickSocketJsonHandler
 import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.utils.hypixel.HypixelGameType
@@ -29,7 +28,8 @@ class HypixelHelperImpl : HypixelHelper {
     override lateinit var hypixelApi: HypixelAPI
     override val locrawHelper = HypixelLocrawHelperImpl(this)
 
-    init {
+    fun initialize() {
+        //UniCore.getChatHelper().addPlayerRegex("".toRegex())
         MinecraftForge.EVENT_BUS.register(this)
         UniCore.getConfig().addHolder(config)
         if (config.apiKey.isNotEmpty())
@@ -62,7 +62,7 @@ class HypixelHelperImpl : HypixelHelper {
             if (!matcher.find()) return
             val apiKey = matcher.group("key")
             UniCore.getNotifications().post(UniCore.getName(), "Setting up your Hypixel API key... This will take a few seconds.")
-            Multithreading.schedule({
+            UniCore.getMultithreader().schedule({
                 UniCore.getHttpRequester().request(Request.Builder()
                     .get()
                     .url("https://api.hypixel.net/key?key=$apiKey")

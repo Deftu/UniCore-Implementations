@@ -1,32 +1,26 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import xyz.unifycraft.gradle.ModLoader
 import xyz.unifycraft.gradle.utils.GameSide
-import xyz.unifycraft.gradle.utils.disableRunConfigs
-import xyz.unifycraft.gradle.utils.useForgeMixin
-import xyz.unifycraft.gradle.utils.useProperty
-import xyz.unifycraft.gradle.utils.useMinecraftTweaker
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("jvm")
+    java
     id("xyz.unifycraft.gradle.multiversion")
-    id("gg.essential.loom")
     id("xyz.unifycraft.gradle.tools")
-    id("xyz.unifycraft.gradle.snippets.shadow")
-    id("net.kyori.blossom") version("1.3.0")
-    id("java")
+    id("xyz.unifycraft.gradle.tools.shadow")
+    id("xyz.unifycraft.gradle.tools.blossom")
 }
 
-val projectVersion: String by project
-version = projectVersion
-val projectGroup: String by project
-group = projectGroup
-val projectId: String by project
+base.archivesName.set("${modData.name}-${mcData.versionStr}-${mcData.loader.name}".toLowerCase())
+loom.mixin.defaultRefmapName.set("mixins.${modData.id}.refmap.json")
 
-useMinecraftTweaker("xyz.unifycraft.unicore.api.mixins.UniCoreDevTweaker")
-loom.useProperty("mixin.debug", "true", GameSide.CLIENT)
-loom.disableRunConfigs(GameSide.SERVER)
-if (mcData.loader == ModLoader.forge)
-    loom.useForgeMixin(projectId)
+loomHelper {
+    useTweaker("xyz.unifycraft.unicore.api.mixins.UniCoreDevTweaker")
+    useProperty("mixin.debug", "true", GameSide.CLIENT)
+    disableRunConfigs(GameSide.SERVER)
+    //if (mcData.loader == ModLoader.forge)
+    //    loom.useForgeMixin(projectId)
+}
 
 val dummy by sourceSets.creating
 
@@ -34,11 +28,18 @@ blossom {
     replaceToken("__VERSION__", project.version)
 }
 
+repositories {
+    maven("https://repo.hypixel.net/repository/Hypixel/")
+}
+
 dependencies {
     // Implement API
-    val unicoreApi = "xyz.unifycraft.unicore:unicore-${mcData.versionStr}-${mcData.loader.name}:${project.version}"
+    val unicoreApi = "xyz.unifycraft.unicore.api:unicore-${mcData.versionStr}-${mcData.loader.name}:${modData.version}"
     unishade(unicoreApi)
     "dummyCompileOnly"(unicoreApi)
+
+    // Independent of API
+    unishade("com.github.JnCrMx:discord-game-sdk4j:v0.5.5")
 
     // Ducks
     implementation(dummy.output)
@@ -47,31 +48,9 @@ dependencies {
 tasks {
     named<Jar>("jar") {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        val projectName: String by project
-        archiveBaseName.set("$projectName-${mcData.versionStr}-${mcData.loader.name}".toLowerCase())
     }
 
     named<ShadowJar>("unishadowJar") {
-        val projectGroup: String by project
-        relocate("com.google.gson", "${projectGroup}.lib.gson")
-    }
-
-    processResources {
-        val projectId: String by project
-
-        filesMatching(listOf("mods.toml", "fabric.mod.json", "mcmod.info")) {
-            expand(mapOf(
-                "id" to projectId,
-                "version" to project.version,
-                "name" to project.name,
-                "mcversion" to mcData.versionStr
-            ))
-        }
-
-        filesMatching("mixins.${projectId}.json") {
-            expand(mapOf(
-                "javaversion" to if (mcData.javaVersion.isJava8) "JAVA_8" else if (mcData.javaVersion.isCompatibleWith(JavaVersion.VERSION_16)) "JAVA_16" else "JAVA_17"
-            ))
-        }
+        relocate("com.google.gson", "${modData.group}.lib.gson")
     }
 }

@@ -8,7 +8,6 @@ import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import xyz.deftu.deftils.Multithreading
 import xyz.deftu.quicksocket.common.utils.QuickSocketJsonHandler
 import xyz.unifycraft.unicore.api.UniCore
 import xyz.unifycraft.unicore.api.utils.hypixel.HypixelGameType
@@ -33,7 +32,7 @@ class HypixelLocrawHelperImpl(
 
     override fun enqueueUpdate(interval: Long) {
         sendPermitted = true
-        Multithreading.schedule({
+        UniCore.getMultithreader().schedule({
             if (sendPermitted) {
                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/locraw")
             }
@@ -74,7 +73,7 @@ class HypixelLocrawHelperImpl(
         val raw = UniCore.getJsonHelper().parse(stripped)
         if (!raw.isJsonObject) return
         val json = raw.asJsonObject
-        val parsed = UniCore.getGson().fromJson(json, HypixelLocraw::class.java) ?: return
+        val parsed = UniCore.getJsonHelper().gson.fromJson(json, HypixelLocraw::class.java) ?: return
         if (parsed.gameType == HypixelGameType.LIMBO) {
             checked = false
             limboLoop++

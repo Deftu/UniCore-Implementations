@@ -12,7 +12,7 @@ class KeyBindSerializer(
 
     init {
         if (!configFile.exists() && !configFile.createNewFile()
-                .also { configFile.writeText(UniCore.getGson().toJson(JsonObject())) }
+                .also { configFile.writeText(UniCore.getJsonHelper().gson.toJson(JsonObject())) }
         ) throw IllegalStateException("Failed to create ${UniCore.getName()} keybinds configuration file.")
     }
 
@@ -35,7 +35,7 @@ class KeyBindSerializer(
         val serializedName = keyBind.getSerializedName()
         keyBind.keyCode = keyCode
         config.addProperty(serializedName, keyCode)
-        configFile.writeText(UniCore.getGson().toJson(config))
+        configFile.writeText(UniCore.getJsonHelper().gson.toJson(config))
     }
 
     fun update(keyBind: BaseKeyBind) = update(keyBind, keyBind.keyCode)
@@ -51,6 +51,6 @@ class KeyBindSerializer(
 
     private fun fixConfig() {
         if (!configFile.exists()) return
-        configFile.writeText(UniCore.getGson().toJson(JsonObject()))
+        configFile.writeText(UniCore.getJsonHelper().gson.toJson(JsonObject()))
     }
 }

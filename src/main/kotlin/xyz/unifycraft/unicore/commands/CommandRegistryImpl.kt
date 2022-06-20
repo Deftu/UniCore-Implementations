@@ -9,7 +9,7 @@ import xyz.unifycraft.unicore.api.commands.BaseCommand
 import xyz.unifycraft.unicore.api.commands.CommandRegistry
 import xyz.unifycraft.unicore.api.commands.annotations.Command
 import xyz.unifycraft.unicore.api.commands.arguments.*
-import xyz.unifycraft.unicore.api.events.ChatSendEvent
+import xyz.unifycraft.unicore.api.events.chat.ChatSendEvent
 import xyz.unifycraft.unicore.commands.arguments.ArgumentSerializer
 
 class CommandRegistryImpl : CommandRegistry {

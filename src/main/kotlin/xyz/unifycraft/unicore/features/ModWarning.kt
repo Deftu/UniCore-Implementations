@@ -20,18 +20,12 @@ object ModWarning {
             val string = it.body?.string() ?: return@request JsonObject()
             UniCore.getJsonHelper().parse(string).asJsonObject ?: JsonObject()
         }
-        mods = UniCore.getGson().fromJson(json, Array<Mod>::class.java).toList()
+        mods = UniCore.getJsonHelper().gson.fromJson(json, Array<Mod>::class.java).toList()
     }
 
     @Subscribe
     fun onPostInitialize(event: PostInitializationEvent) {
-        val mods = mods.filter {
-            //#if MC>=11202
-            Loader.isModLoaded(it.id)
-            //#elseif FABRIC==1
-            //$$ true
-            //#endif
-        }
+        val mods = mods.filter(Mod::isLoaded)
         if (mods.isEmpty()) return
         for (mod in mods) {
             UniCore.getNotifications().post("Warning - ${mod.name}", mod.reason)
@@ -43,4 +37,6 @@ internal data class Mod(
     val name: String,
     val id: String,
     val reason: String
-)
+) {
+    fun isLoaded() = UniCore.getModLoaderHelper().isModLoaded(id)
+}

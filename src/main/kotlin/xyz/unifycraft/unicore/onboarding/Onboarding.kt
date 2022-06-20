@@ -18,13 +18,13 @@ object Onboarding {
             data = OnboardingData()
             save()
         } else {
-            data = UniCore.getGson().fromJson(file.readText(), OnboardingData::class.java)
+            data = UniCore.getJsonHelper().gson.fromJson(file.readText(), OnboardingData::class.java)
         }
     }
 
     fun save() {
         if (this::data.isInitialized) {
-            file.writeText(UniCore.getGson().toJson(data))
+            file.writeText(UniCore.getJsonHelper().gson.toJson(data))
         }
     }
 
