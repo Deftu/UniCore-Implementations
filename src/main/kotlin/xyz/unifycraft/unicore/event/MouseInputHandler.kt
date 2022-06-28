@@ -1,5 +1,6 @@
 package xyz.unifycraft.unicore.event
 
+import gg.essential.universal.UMouse
 import net.minecraft.client.Minecraft
 import org.lwjgl.input.Mouse
 import xyz.unifycraft.unicore.api.UniCore
@@ -7,6 +8,7 @@ import xyz.unifycraft.unicore.api.events.CancellableEvent
 import xyz.unifycraft.unicore.api.events.input.MouseButtonEvent
 import xyz.unifycraft.unicore.api.events.input.MouseMoveEvent
 import xyz.unifycraft.unicore.api.events.input.MouseScrollEvent
+import kotlin.math.floor
 
 object MouseInputHandler {
     fun handle(): Boolean {
@@ -17,9 +19,9 @@ object MouseInputHandler {
             if (isButton) {
                 val event: CancellableEvent = MouseButtonEvent(
                     Mouse.getEventButton(),
-                    Mouse.getEventButtonState(),
-                    Mouse.getEventX() / Minecraft.getMinecraft().displayWidth.toDouble(),
-                    Mouse.getEventY() / Minecraft.getMinecraft().displayHeight.toDouble()
+                    !Mouse.getEventButtonState(),
+                    UMouse.Scaled.x,
+                    UMouse.Scaled.y
                 )
                 UniCore.getEventBus().post(event)
                 if (event.cancelled) {

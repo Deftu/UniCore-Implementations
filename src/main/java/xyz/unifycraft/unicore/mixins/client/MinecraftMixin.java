@@ -1,32 +1,55 @@
 package xyz.unifycraft.unicore.mixins.client;
 
-import net.minecraft.client.stream.IStream;
+import de.jcm.discordgamesdk.activity.Activity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.unifycraft.unicore.UniCoreDiImpl;
+import xyz.unifycraft.unicore.UniCoreImpl;
 import xyz.unifycraft.unicore.api.UniCore;
 import xyz.unifycraft.unicore.api.UniCoreDi;
 import xyz.unifycraft.unicore.api.events.*;
-
-import java.io.File;
-
-//#if MC<=11202
-import net.minecraft.client.Minecraft;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import xyz.unifycraft.unicore.api.events.input.KeyboardInputEvent;
 import xyz.unifycraft.unicore.event.MouseInputHandler;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+//#if MC<=11202
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.stream.IStream;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.WorldClient;
+import org.lwjgl.input.Keyboard;
+
 @Mixin({Minecraft.class})
-public class MinecraftMixin {
+public abstract class MinecraftMixin {
     @Shadow @Final public File mcDataDir;
     @Shadow public int displayWidth;
     @Shadow public int displayHeight;
+    @Shadow public GameSettings gameSettings;
+
+    @Shadow protected abstract ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException;
+
+    @Shadow public GuiScreen currentScreen;
+    @Shadow public WorldClient theWorld;
+    @Shadow private ServerData currentServerData;
+    @Shadow private int serverPort;
+    @Unique private List<Integer> twitchKeyCodes;
 
     @Inject(method = "startGame", at = @At("HEAD"))
     private void onGamePreStarted(CallbackInfo ci) {
@@ -58,15 +81,54 @@ public class MinecraftMixin {
         }
     }
 
-    @Inject(method = "runTick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;fireMouseInput()V", remap = false, shift = At.Shift.AFTER))
+    @Inject(method = "runTick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;fireMouseInput()V", remap = false, shift = At.Shift.BEFORE))
     private void onMouseInput(CallbackInfo ci) {
         if (MouseInputHandler.INSTANCE.handle()) {
             ci.cancel();
         }
     }
 
-    // Stop Minecraft from even trying to use Twitch
+    @Inject(method = "displayGuiScreen", at = @At("HEAD"))
+    private void onGuiScreenDisplayed(GuiScreen screen, CallbackInfo ci) {
+        if (screen instanceof GuiMainMenu || (screen == null && theWorld == null)) {
+            Activity activity = new Activity();
+            activity.setDetails("In the main menu");
+            UniCoreImpl.getInstance().discordCore().updateActivity(activity);
+        }
+
+        if (screen == null && theWorld != null) {
+            Activity activity = new Activity();
+            if (currentServerData != null) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("Playing on ");
+                builder.append(currentServerData.serverIP);
+                if (serverPort != 25565 && serverPort != 0) {
+                    builder.append(":");
+                    builder.append(serverPort);
+                }
+                activity.setDetails(builder.toString());
+            } else activity.setDetails("Playing singleplayer");
+            UniCoreImpl.getInstance().discordCore().updateActivity(activity);
+        }
+    }
+
     //#if MC<=10809
+    // Stop Minecraft from even trying to use Twitch
+    @Inject(method = "startGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;startTimerHackThread()V"))
+    private void removeTwitchKeyBindings(CallbackInfo ci) {
+        List<KeyBinding> keyBindings = Arrays.asList(gameSettings.keyBindings);
+        twitchKeyCodes = keyBindings.stream().filter(keyBinding -> keyBinding.getKeyCategory().equals("key.categories.stream")).map(KeyBinding::getKeyCode).collect(Collectors.toList());
+        gameSettings.keyBindings = keyBindings.stream().filter(keyBinding -> !keyBinding.getKeyCategory().equals("key.categories.stream")).toArray(KeyBinding[]::new);
+        KeyBinding.getKeybinds().remove("key.categories.stream");
+    }
+
+    @Inject(method = "dispatchKeypresses", at = @At("HEAD"), cancellable = true)
+    private void cancelTwitchKeyBindings(CallbackInfo ci) {
+        if (!Keyboard.getEventKeyState()) return;
+        int code = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
+        if (twitchKeyCodes.contains(code)) ci.cancel();
+    }
+
     @Inject(method = "initStream", cancellable = true, at = @At("HEAD"))
     private void stopStream(CallbackInfo ci) {
         ci.cancel();

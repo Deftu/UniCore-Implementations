@@ -8,6 +8,7 @@ import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.RelativeConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
+import gg.essential.elementa.dsl.provideDelegate
 import gg.essential.universal.UMatrixStack
 import me.kbrewster.eventbus.Subscribe
 import xyz.unifycraft.unicore.api.UniCore
@@ -19,7 +20,7 @@ import xyz.unifycraft.unicore.api.events.input.MouseScrollEvent
 import xyz.unifycraft.unicore.api.gui.ElementaHud
 
 class ElementaHudImpl : ElementaHud {
-    override val window = Window(ElementaVersion.V1)
+    override val window by Window(ElementaVersion.V1)
     override val namespaces = mutableMapOf<String, UIContainer>()
 
     fun initialize() {
@@ -28,10 +29,11 @@ class ElementaHudImpl : ElementaHud {
     }
 
     override fun <T : UIComponent> add(namespace: String, component: T, createIfNotExists: Boolean) {
-        val container = namespace(namespace, createIfNotExists)
-        println("Children: ${container.children.toList()}")
-        component childOf container
-        namespaces[namespace] = container
+        Window.enqueueRenderOperation {
+            val container by namespace(namespace, createIfNotExists)
+            component childOf container
+            namespaces[namespace] = container
+        }
     }
 
     override fun namespace(namespace: String, createIfNotExists: Boolean) =

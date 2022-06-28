@@ -25,7 +25,6 @@ class NotificationsImpl : Notifications {
 
     fun post(notification: Notification) {
         if (UniCore.getElementaHud().namespace(namespace).childrenOfType(Notification::class.java).isEmpty()) {
-            println("Posting notification")
             notification ofHud namespace
         } else queue.add(notification)
     }

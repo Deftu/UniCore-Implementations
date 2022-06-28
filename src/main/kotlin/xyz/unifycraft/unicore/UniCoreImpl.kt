@@ -22,7 +22,6 @@ import xyz.unifycraft.unicore.commands.UniCoreCommand
 import xyz.unifycraft.unicore.keybinds.KeyBindRegistryImpl
 import xyz.unifycraft.unicore.utils.http.HttpRequesterImpl
 import xyz.unifycraft.unicore.utils.hypixel.HypixelHelperImpl
-import xyz.unifycraft.unicore.utils.updater.UpdaterEventListener
 import xyz.deftu.deftils.Multithreader
 import xyz.unifycraft.unicore.api.utils.deleter.Deleter
 import xyz.unifycraft.unicore.gui.ElementaHudImpl
@@ -32,9 +31,8 @@ import xyz.unifycraft.unicore.onboarding.OnboardingEventListener
 import xyz.unifycraft.unicore.utils.*
 import xyz.unifycraft.unicore.utils.deleter.DeleterImpl
 import xyz.unifycraft.unicore.utils.updater.UpdaterImpl
-import xyz.unifycraft.unicore.rpc.DiscordHandler
+import xyz.unifycraft.unicore.discord.DiscordCore
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 //#if MC<=11202
 import net.minecraftforge.common.MinecraftForge
@@ -77,7 +75,7 @@ class UniCoreImpl : UniCore {
     private lateinit var colorHelper: ColorHelper
 
     // Implementation
-    private lateinit var discordHandler: DiscordHandler
+    private lateinit var discordCore: DiscordCore
     private lateinit var cloudConnection: CloudConnection
 
     override fun initialize(event: InitializationEvent) {
@@ -86,8 +84,7 @@ class UniCoreImpl : UniCore {
         // APIs
         //#if MC<=11202
         listOf(
-            EventExtender(),
-            UpdaterEventListener()
+            EventExtender()
         ).forEach(MinecraftForge.EVENT_BUS::register)
         //#endif
 
@@ -117,7 +114,7 @@ class UniCoreImpl : UniCore {
         Onboarding.initialize()
         eventBus.register(OnboardingEventListener())
         QuickSocketJsonHandler.applyJsonParser(CloudJsonParser())
-        discordHandler = DiscordHandler().also { it.initialize() }
+        discordCore = DiscordCore().also { it.initialize() }
         cloudConnection = CloudConnection(
             sessionId = UUID.randomUUID(),
             headers = arrayOf(
@@ -161,9 +158,11 @@ class UniCoreImpl : UniCore {
     override fun hypixelHelper() = hypixelHelper
     override fun colorHelper() = colorHelper
 
+    fun discordCore() = discordCore
     fun cloudConnection() = cloudConnection
 
     companion object {
+        @JvmStatic
         lateinit var instance: UniCoreImpl
             private set
     }

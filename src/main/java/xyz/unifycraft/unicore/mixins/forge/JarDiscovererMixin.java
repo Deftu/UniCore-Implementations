@@ -11,7 +11,6 @@ public abstract class JarDiscovererMixin {
 
     @Redirect(method = { "discover", "findClassesASM" }, at = @At(value = "INVOKE", target = "Ljava/lang/String;startsWith(Ljava/lang/String;)Z"))
     private boolean shouldSkip(String entry, String originalPattern) {
-
         return entry.startsWith("META-INF/versions/9/") || entry.startsWith(originalPattern);
     }
 

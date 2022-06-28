@@ -10,8 +10,8 @@
         //#if MC<=11202
         "client.MinecraftMixin",
         //#if MC<=10809
-        "client.GameSettingsMixin",
         "forge.ForgeVersionMixin",
+        "gui.GuiOptionsMixin",
         "gui.GuiStreamIndicatorMixin",
         //#endif
         "forge.JarDiscovererMixin",
