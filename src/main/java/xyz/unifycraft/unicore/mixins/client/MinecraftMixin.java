@@ -39,13 +39,7 @@ import org.lwjgl.input.Keyboard;
 @Mixin({Minecraft.class})
 public abstract class MinecraftMixin {
     @Shadow @Final public File mcDataDir;
-    @Shadow public int displayWidth;
-    @Shadow public int displayHeight;
     @Shadow public GameSettings gameSettings;
-
-    @Shadow protected abstract ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException;
-
-    @Shadow public GuiScreen currentScreen;
     @Shadow public WorldClient theWorld;
     @Shadow private ServerData currentServerData;
     @Shadow private int serverPort;
