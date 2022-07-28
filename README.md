@@ -1,7 +1,6 @@
 <div align="center">
 
-# `UniCore Internals`
-The internals for UniCore.
+# `UniCore Implementations`
+The internal implementation of UniCore.
 
 </div>
-
