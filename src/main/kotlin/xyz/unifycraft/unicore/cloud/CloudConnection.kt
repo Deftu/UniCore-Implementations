@@ -25,6 +25,12 @@ class CloudConnection(
     uri = UniCoreEnvironment.cloudConnectionUri,
     headers = (headers.toMap() + mapOf(proposedSessionIdName to sessionId.toString()))
 ) {
+    companion object {
+        const val proposedSessionIdName = "proposed_session_id"
+        const val acceptedSessionIdName = "accepted_session_id"
+        const val sessionIdName = "session_id"
+    }
+
     private val connectLock = ReentrantLock()
     private var previouslyConnected = false
     private val logger = LogManager.getLogger("${UniCore.getName()} (Cloud Connection)")
@@ -39,7 +45,6 @@ class CloudConnection(
             if (!connectLock.tryLock()) return
             if (!Onboarding.isToS()) return
             if (isOpen) return
-            addHeader("minecraft_token", UMinecraft.getMinecraft().session.token)
             if (!previouslyConnected) {
                 if (uri.scheme == "wss")
                     setSocketFactory(HttpRequesterImpl.sslSocketFactory)
@@ -78,10 +83,4 @@ class CloudConnection(
 
     override fun onPacketSent(packet: PacketBase, data: JsonObject) =
         data.addProperty(sessionIdName, sessionId.toString())
-
-    companion object {
-        const val proposedSessionIdName = "proposed_session_id"
-        const val acceptedSessionIdName = "accepted_session_id"
-        const val sessionIdName = "session_id"
-    }
 }

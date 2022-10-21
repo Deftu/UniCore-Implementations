@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import xyz.unifycraft.gradle.ModLoader
 import xyz.unifycraft.gradle.utils.GameSide
 
 plugins {
@@ -24,17 +23,13 @@ loomHelper {
 
 val dummy by sourceSets.creating
 
-blossom {
-    replaceToken("__VERSION__", project.version)
-}
-
 repositories {
     maven("https://repo.hypixel.net/repository/Hypixel/")
 }
 
 dependencies {
     // Implement API
-    val unicoreApi = "xyz.unifycraft.unicore.api:unicore-${mcData.versionStr}-${mcData.loader.name}:${modData.version}"
+    val unicoreApi = "xyz.unifycraft:unicore-${mcData.versionStr}-${mcData.loader.name}:${modData.version}"
     unishade(unicoreApi)
     "dummyCompileOnly"(unicoreApi)
 

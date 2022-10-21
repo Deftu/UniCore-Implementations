@@ -9,12 +9,14 @@ class PacketNewRelease : PacketBase("NEW_RELEASE") {
         if (data == null) return
         val version = data["version"].asJsonPrimitive.asString
         if (version.isBlank()) return
-        UniCore.getNotifications().post(UniCore.getName(), "New release available: $version") {
-            // TODO: Open update menu and close the game when the user clicks on it.
-        }
+        UniCore.getNotifications().post(UniCore.getName(), "New release available: $version", this::onNewReleaseInteract)
     }
 
     override fun onPacketSent(data: JsonObject) {
         throw UnsupportedOperationException("We cannot send new release packets to the server.")
+    }
+
+    private fun onNewReleaseInteract() {
+        // TODO: Open update menu and close the game when the user clicks on it.
     }
 }

@@ -16,6 +16,6 @@ class PacketKeepAlive : PacketBase("KEEP_ALIVE") {
     }
 
     override fun onPacketSent(data: JsonObject) {
-        // We won't use this for this packet!
+        // We don't need to send data along with our packet...
     }
 }

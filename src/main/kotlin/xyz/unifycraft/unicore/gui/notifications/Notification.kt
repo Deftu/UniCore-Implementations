@@ -10,10 +10,10 @@ import xyz.unifycraft.unicore.api.UniCorePalette
 import xyz.unifycraft.unicore.gui.components.UIHoverBlock
 
 class Notification(
-    title: String,
-    description: String,
-    val duration: Float,
-    val click: Runnable
+    val title: String,
+    val content: String,
+    private val duration: Float,
+    val action: Runnable
 ) : UIHoverBlock(
     color = UniCorePalette.BACKGROUND.toConstraint(),
     hoverColor = UniCorePalette.PRIMARY_VARIANT,
@@ -38,24 +38,24 @@ class Notification(
         }.onMouseLeave {
             unhighlight()
         }.onMouseRelease {
-            click.run()
+            action.run()
             animateOut()
         }
 
-        val titleText = UIWrappedText(title).constrain {
+        UIWrappedText(title).constrain {
             x = 2.pixels()
             y = 2.pixels()
             width = FillConstraint(false) - 10.pixels()
             textScale = 1.3f.pixels()
         } childOf this
-        val descriptionText = UIWrappedText(description).constrain {
+        val contentText = UIWrappedText(content).constrain {
             x = 2.pixels()
             y = SiblingConstraint(2f)
             width = FillConstraint(false) - 8.pixels()
         } childOf this
 
         constrain {
-            height = (90.percent() boundTo descriptionText) + constraints.height
+            height = (90.percent() boundTo contentText) + constraints.height
         }
     }
 

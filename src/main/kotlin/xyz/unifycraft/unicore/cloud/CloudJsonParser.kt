@@ -17,19 +17,19 @@ class CloudJsonParser : AbstractJsonParser {
     }
 
     override fun parse(input: JsonReader) =
-        //#if MC>=11202
+        //#if MC<=11202
         parser.parse(input)
         //#else
         //$$ JsonParser.parseReader(reader)
         //#endif
     override fun parse(input: Reader) =
-            //#if MC>=11202
+            //#if MC<=11202
             parser.parse(input)
             //#else
             //$$ JsonParser.parseReader(reader)
             //#endif
     override fun parse(input: String) =
-            //#if MC>=11202
+            //#if MC<=11202
             parser.parse(input)
             //#else
             //$$ JsonParser.parseString(reader)
